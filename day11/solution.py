@@ -7,7 +7,7 @@ class Monkey:
         self.if_false_monkey = if_false_monkey
         self.inspections = 0
 
-max_divisor = 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19
+max_divisor = 2 * 3 * 5 * 7 * 11 * 13 * 17 * 19 # depends on input data (tests divisors)
 def do_task(worry_divisor, rounds_count):
     monkeys = []
     with open('input', 'r') as input_file:
