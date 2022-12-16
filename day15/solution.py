@@ -51,7 +51,6 @@ with open('input', 'r') as input_file:
 
     Ares = set()
 
-    c = 0
     for line in input_file:
         sensor_x, sensor_y, beacon_x, beacon_y = re.search(pattern, line).groups()
         sensor_x, sensor_y, beacon_x, beacon_y = int(sensor_x), int(sensor_y), int(beacon_x), int(beacon_y)
@@ -78,7 +77,6 @@ with open('input', 'r') as input_file:
                 end = sensor_x + i + 1
                 add_coverage(beg, end, y_high)
 
-        c += 1
     # Task A
     print(len(Ares))
 
@@ -89,5 +87,6 @@ with open('input', 'r') as input_file:
         r2 = coverage[i][1]
         if r2[0] < r1[0]:
             r1 = r2
+            
         # Task B 
         print(r1[1] * YA * 2 + i) # possibly the correct solution is given for r1[0] / r2[0] because ranges may be flipped
