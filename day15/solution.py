@@ -46,7 +46,7 @@ def add_coverage(beg, end, i):
     coverage[i].append([beg, end])
     update(i)
 
-with open('day15/input', 'r') as input_file:
+with open('input', 'r') as input_file:
     task_a_result = 0
 
     Ares = set()
