@@ -60,29 +60,41 @@ with open('input', 'r') as input:
     worth_visiting = [nodes[node_name] for node_name in nodes if nodes[node_name].flow_rate > 0]
     valve_status = []
 
-    def traverse(current, step_value, total, step, elephant, max_steps):
+    def traverse(current, step_value, total, step, max_steps):
         global worth_visiting
         if step == max_steps:
-            return total
+            return (total, None)
         best = total + step_value * (max_steps - step)
         iter_worth_visiting = worth_visiting[:]
+        best_to_visit_path = []
+        child_best_to_visit_path = None
+        best_to_visit = None
         for to_visit in iter_worth_visiting:
             distance = distances[current.name][to_visit.name]
             if step + distance + 1 > max_steps:
                 continue
             worth_visiting.remove(to_visit)
-            if elephant:
-                pass
-            else:
-                visit_value = traverse(to_visit, step_value + to_visit.flow_rate, total + step_value * (distance + 1), step + distance + 1, elephant, max_steps)
+            visit_value, child_to_visit_path = traverse(to_visit, step_value + to_visit.flow_rate, total + step_value * (distance + 1), step + distance + 1, max_steps)
             worth_visiting.append(to_visit)
             if visit_value > best:
                 best = visit_value
+                best_to_visit = to_visit
+                child_best_to_visit_path = child_to_visit_path
 
-        return best
+        if best_to_visit != None:
+            best_to_visit_path.append(best_to_visit)
+        if child_best_to_visit_path != None:
+            best_to_visit_path.extend(child_best_to_visit_path)
+        return (best, best_to_visit_path)
 
-    # task_a_result = traverse(current_node, 0, 0, 0, False, A_steps)
-    task_b_result = traverse(current_node, 0, 0, 0, True, B_steps)
+    task_a_result, _ = traverse(current_node, 0, 0, 0, A_steps)
+    task_b_result, task_b_result_path = traverse(current_node, 0, 0, 0, B_steps)
+    for it in task_b_result_path: # ! Works only as long as you & elephant visit and open at most all non-zero flow rate nodes - otherwise elephant "waits" idle which won't give best solution (see sample data for this task)
+        worth_visiting.remove(it)
+    el_task_b_result, el_task_b_result_path = traverse(current_node, 0, 0, 0, B_steps)
 
-    # print(task_a_result)
-    print(task_b_result)
+    # Task A
+    print(task_a_result)
+
+    # Task B
+    print(task_b_result + el_task_b_result)
