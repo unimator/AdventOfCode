@@ -195,12 +195,10 @@ def print_cave():
     for i in reversed(range(bottom_line + 6)):
         print(''.join(cave[i]))
 
-jets_dict = {}
-
 def bottom_lines_str(size):
     return ''.join([''.join([c for c in cave[bottom_line - i - 1]]) for i in range(size)])
 
-with open('day17\input', 'r') as input_file:
+with open('input', 'r') as input_file:
     predicted_repeat_size = 100
     jets = [c for c in input_file.read()]
     rocks_generator = generate_rock()
