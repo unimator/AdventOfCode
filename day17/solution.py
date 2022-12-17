@@ -280,8 +280,8 @@ with open('input', 'r') as input_file:
             print(bottom_line - 1)
         
         if b_solution_found_flag and i > TASK_A_SIZE:
-            # Task B
             break
-    
+        
+    # Task B
     task_b_result += additional_height_for_b_task - 1 # -1 because we're looking for structure height, not first full line free above which was used to calculate spawn position
     print(task_b_result)
