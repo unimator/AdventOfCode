@@ -16,11 +16,7 @@ with open('input', 'r') as input_file:
         for [ox, oy, oz] in cubes:
             if cx == ox and cy == oy and cz == oz:
                 continue
-            if cx == ox and cy == oy and abs(cz - oz) == 1:
-                faces_not_covered -= 1
-            if cx == ox and abs(cy - oy) == 1 and cz == oz:
-                faces_not_covered -= 1
-            if abs(cx - ox) == 1 and cy == oy and cz == oz:
+            if abs(cx - ox) + abs(cy - oy) + abs(cz - oz) == 1:
                 faces_not_covered -= 1
             
         task_a_result += faces_not_covered
@@ -63,11 +59,7 @@ with open('input', 'r') as input_file:
         for [ox, oy, oz] in cubes:
             if cx == ox and cy == oy and cz == oz:
                 continue
-            if cx == ox and cy == oy and abs(cz - oz) == 1:
-                faces_not_covered -= 1
-            if cx == ox and abs(cy - oy) == 1 and cz == oz:
-                faces_not_covered -= 1
-            if abs(cx - ox) == 1 and cy == oy and cz == oz:
+            if abs(cx - ox) + abs(cy - oy) + abs(cz - oz) == 1:
                 faces_not_covered -= 1
 
         x = cx
