@@ -25,6 +25,7 @@ with open('input', 'r') as input_file:
             
         task_a_result += faces_not_covered
     
+    # Task A
     print(task_a_result)
 
     pond = [[[False for _ in range(POND_SIZE)] for _ in range(POND_SIZE)] for _ in range(POND_SIZE)]
@@ -88,4 +89,5 @@ with open('input', 'r') as input_file:
 
         task_b_result += faces_not_covered
     
+    # Task B
     print(task_b_result)
