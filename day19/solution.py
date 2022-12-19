@@ -4,7 +4,7 @@ from threading import Thread
 pattern = r'Blueprint (?P<blueprint_id>\d+): Each ore robot costs (?P<ore_ore>\d+) ore\. Each clay robot costs (?P<clay_ore>\d+) ore\. Each obsidian robot costs (?P<obs_core>\d+) ore and (?P<obs_clay>\d+) clay\. Each geode robot costs (?P<geode_ore>\d+) ore and (?P<geode_obs>\d+) obsidian\.'
 
 TIME_STEPS = 24
-NUM_OF_WORKERS = 5
+NUM_OF_WORKERS = 10
 
 def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode_obs, results):
     robots_costs = {
@@ -41,11 +41,11 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
         return (new_collection, new_robots)
 
     def is_profitable(robot_type, collection, robots, step):
-        if robot_type == "clay":
-            return (TIME_STEPS - step) * (robots["clay"] + 1) + collection["clay"] > robots_costs["obs"]["clay"]
-        elif robot_type == "obs":
-            return (TIME_STEPS - step) * (robots["obs"] + 1) + collection["obs"] > robots_costs["geode"]["obs"]
-        elif step < TIME_STEPS:
+        # if robot_type == "clay":
+        #     return (TIME_STEPS - step) * (robots["clay"] + 1) + collection["clay"] > robots_costs["obs"]["clay"]
+        # elif robot_type == "obs":
+        #     return (TIME_STEPS - step) * (robots["obs"] + 1) + collection["obs"] > robots_costs["geode"]["obs"]
+        # elif step < TIME_STEPS:
             return True
         
     def hash_step(step, robots, collection, to_build, previously_not_builded):
@@ -86,12 +86,12 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
             max_value_and_step[0] = step_collection["geode"]
             max_value_and_step[1] = step
         
-        # if step - max_value_and_step[1] > 5 and max_value_and_step[0] > step_collection["geode"]:
-        #     return step_collection["geode"]
+        if step - max_value_and_step[1] > 5 and max_value_and_step[0] > step_collection["geode"]:
+            return step_collection["geode"]
         if step == TIME_STEPS:
             return step_collection["geode"]
         best_value = None
-        if step_collection["ore"] >= max_ore and step_collection["clay"] >= robots_costs["obs"]["clay"] and step_collection["obs"] >= robots_costs["geode"]["obs"]:
+        if collection["ore"] >= max_ore and collection["clay"] >= robots_costs["obs"]["clay"] and collection["obs"] >= robots_costs["geode"]["obs"]:
             pass
         else:
             new_previously_not_builded = []
@@ -108,18 +108,21 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
                     new_collection, new_robots = build_robot(robot_type, step_collection, robots)
                     build_robot_step_value = solve(new_collection, new_robots, step + 1, [])
                     partial_results[step_robot_hash] = build_robot_step_value
-                if build_robot_step_value > best_value or best_value == None:
+                
+                if best_value == None or build_robot_step_value > best_value:
                     best_value = build_robot_step_value
                 
         if best_value == None:
+            print(step_collection)
+            print(robots_costs)
             raise ValueError("Best value should not be none at this point")
         return best_value
     
     blueprint_id = int(blueprint_id)
-    results[blueprint_id - 1] = solve(init_collection, init_robots, 1, []) * blueprint_id
+    results[blueprint_id - 1] = solve(init_collection, init_robots, 1, [])
 
 
-with open('input', 'r') as input_file:
+with open(r'C:/repos/AdventOfCode2022/day19/input', 'r') as input_file:
     
     to_process = []
     for line in input_file:
@@ -148,7 +151,7 @@ with open('input', 'r') as input_file:
     
     task_a_result = 0
     for r in range(len(to_process)):
-        task_a_result += results[r]
+        task_a_result += (r+1)*results[r]
     
     # Task A
     print(task_a_result)
