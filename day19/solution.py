@@ -97,7 +97,7 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
                 if can_build(robot_type, collection):
                     new_previously_not_builded.append(robot_type)
             best_value = solve(step_collection, robots, step + 1, new_previously_not_builded)
-        for robot_type in ["ore", "clay", "obs", "geode"]:
+        for robot_type in reversed(["ore", "clay", "obs", "geode"]):
             if can_build(robot_type, collection) and is_profitable(robot_type, step_collection, robots, step) and robot_type not in previously_not_builded:
                 step_robot_hash = hash_step(step, robots, collection, robot_type, previously_not_builded)
                 if step_robot_hash in partial_results:
@@ -109,6 +109,7 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
                 
                 if best_value == None or build_robot_step_value > best_value:
                     best_value = build_robot_step_value
+                    # break
                 
         if best_value == None:
             print(step_collection)
@@ -150,3 +151,4 @@ with open('input', 'r') as input_file:
     
     # Task A
     print(task_a_result)
+    print(results)
