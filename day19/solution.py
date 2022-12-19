@@ -79,8 +79,6 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
     max_value_and_step = [0, 0]
 
     def solve(collection, robots, step, previously_not_builded):
-        # global limit_best_step
-        # global limit_best_value
         step_collection = evaluate(collection, robots)
         if max_value_and_step[0] < step_collection["geode"] and step <= max_value_and_step[1]:
             max_value_and_step[0] = step_collection["geode"]
@@ -122,11 +120,10 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
     results[blueprint_id - 1] = solve(init_collection, init_robots, 1, [])
 
 
-with open(r'C:/repos/AdventOfCode2022/day19/input', 'r') as input_file:
+with open('input', 'r') as input_file:
     
     to_process = []
     for line in input_file:
-        #[blueprint_id, ore_ore, clay_ore, obs_core, obs_clay, geode_ore, geode_obs] = re.search(pattern, line).groups()
         to_process.append(re.search(pattern, line).groups())
         
     results = [None] * len(to_process)
@@ -136,8 +133,6 @@ with open(r'C:/repos/AdventOfCode2022/day19/input', 'r') as input_file:
             yield to_process[i*NUM_OF_WORKERS:(i+1)*NUM_OF_WORKERS] 
             i += 1
 
-    # for task in to_process:
-    #     problem(task + (results,))
     for batch in get_next_batch():
         threads = []
         for task in batch:
@@ -155,4 +150,3 @@ with open(r'C:/repos/AdventOfCode2022/day19/input', 'r') as input_file:
     
     # Task A
     print(task_a_result)
-    print(results)
