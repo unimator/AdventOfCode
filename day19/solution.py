@@ -3,10 +3,12 @@ from threading import Thread
 
 pattern = r'Blueprint (?P<blueprint_id>\d+): Each ore robot costs (?P<ore_ore>\d+) ore\. Each clay robot costs (?P<clay_ore>\d+) ore\. Each obsidian robot costs (?P<obs_core>\d+) ore and (?P<obs_clay>\d+) clay\. Each geode robot costs (?P<geode_ore>\d+) ore and (?P<geode_obs>\d+) obsidian\.'
 
-TIME_STEPS = 24
-NUM_OF_WORKERS = 10
+A_TIME_STEPS = 24
+B_TIME_STEPS = 32
+A_NUM_OF_WORKERS = 10
+B_NUM_OF_WORKERS = 3
 
-def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode_obs, results):
+def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode_obs, steps_limit, results):
     robots_costs = {
         "ore": {
             "ore": int(ore_ore)
@@ -41,11 +43,15 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
         return (new_collection, new_robots)
 
     def is_profitable(robot_type, collection, robots, step):
-        # if robot_type == "clay":
-        #     return (TIME_STEPS - step) * (robots["clay"] + 1) + collection["clay"] > robots_costs["obs"]["clay"]
-        # elif robot_type == "obs":
-        #     return (TIME_STEPS - step) * (robots["obs"] + 1) + collection["obs"] > robots_costs["geode"]["obs"]
-        # elif step < TIME_STEPS:
+        if robot_type == "clay":
+            if robots["clay"] + collection["clay"] / (steps_limit - step) >= robots_costs["obs"]["clay"]:
+                return False
+            return True
+        elif robot_type == "ore":
+            if robots["ore"] + collection["ore"] / (steps_limit - step) >= max_ore:
+                return False
+            return True
+        else:
             return True
         
     def hash_step(step, robots, collection, to_build, previously_not_builded):
@@ -76,28 +82,27 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
             new_collection[robot_key] += robots[robot_key]
         return new_collection
 
-    max_value_and_step = [0, 0]
+    min_value_per_step = [0, 0]
 
     def solve(collection, robots, step, previously_not_builded):
         step_collection = evaluate(collection, robots)
-        if max_value_and_step[0] < step_collection["geode"] and step <= max_value_and_step[1]:
-            max_value_and_step[0] = step_collection["geode"]
-            max_value_and_step[1] = step
+        if min_value_per_step[0] < step_collection["geode"] and step <= min_value_per_step[1]:
+            min_value_per_step[0] = step_collection["geode"]
+            min_value_per_step[1] = step
         
-        if step - max_value_and_step[1] > 5 and max_value_and_step[0] > step_collection["geode"]:
+        if step - min_value_per_step[1] > 5 and min_value_per_step[0] > step_collection["geode"]:
             return step_collection["geode"]
-        if step == TIME_STEPS:
+        if step == steps_limit:
             return step_collection["geode"]
-        best_value = None
-        if collection["ore"] >= max_ore and collection["clay"] >= robots_costs["obs"]["clay"] and collection["obs"] >= robots_costs["geode"]["obs"]:
-            pass
-        else:
+        best_value = step_collection["geode"]
+        if not (collection["ore"] >= max_ore and collection["clay"] >= robots_costs["obs"]["clay"] and collection["obs"] >= robots_costs["geode"]["obs"]):
             new_previously_not_builded = []
             for robot_type in ["ore", "clay", "obs", "geode"]:
                 if can_build(robot_type, collection):
                     new_previously_not_builded.append(robot_type)
             best_value = solve(step_collection, robots, step + 1, new_previously_not_builded)
-        for robot_type in reversed(["ore", "clay", "obs", "geode"]):
+        robots_to_try_to_build = ["geode", "obs", "clay", "ore"]
+        for robot_type in robots_to_try_to_build:
             if can_build(robot_type, collection) and is_profitable(robot_type, step_collection, robots, step) and robot_type not in previously_not_builded:
                 step_robot_hash = hash_step(step, robots, collection, robot_type, previously_not_builded)
                 if step_robot_hash in partial_results:
@@ -109,11 +114,8 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
                 
                 if best_value == None or build_robot_step_value > best_value:
                     best_value = build_robot_step_value
-                    # break
                 
         if best_value == None:
-            print(step_collection)
-            print(robots_costs)
             raise ValueError("Best value should not be none at this point")
         return best_value
     
@@ -127,28 +129,39 @@ with open('input', 'r') as input_file:
     for line in input_file:
         to_process.append(re.search(pattern, line).groups())
         
-    results = [None] * len(to_process)
-    def get_next_batch():
+    a_results = [None] * len(to_process)
+    def get_task_a_next_batch():
         i = 0
-        while i < len(to_process) / NUM_OF_WORKERS:
-            yield to_process[i*NUM_OF_WORKERS:(i+1)*NUM_OF_WORKERS] 
+        while i < len(to_process) / A_NUM_OF_WORKERS:
+            yield to_process[i*A_NUM_OF_WORKERS:(i+1)*A_NUM_OF_WORKERS] 
             i += 1
-
-    for batch in get_next_batch():
+    for batch in get_task_a_next_batch():
         threads = []
         for task in batch:
-            thread = Thread(target=problem, args=(task + (results,)))
+            thread = Thread(target=problem, args=(task + (A_TIME_STEPS, a_results,)))
             thread.start()
             threads.append(thread)
 
-        print("Waiting for %s" % (', '.join([task[0] for task in batch])))
         for i in range(len(threads)):
             threads[i].join()
     
     task_a_result = 0
     for r in range(len(to_process)):
-        task_a_result += (r+1)*results[r]
-    
+        task_a_result += (r+1)*a_results[r]
+
     # Task A
     print(task_a_result)
-    print(results)
+
+    task_b_to_process = to_process[0:3]
+    b_results = [None] * 3
+    threads = []
+    for task in task_b_to_process:
+        thread = Thread(target=problem, args=(task + (B_TIME_STEPS, b_results,)))
+        thread.start()
+        threads.append(thread)
+    for i in range(len(threads)):
+        threads[i].join()
+
+    # Task B
+    print(b_results[0] * b_results[1] * b_results[2])  
+
