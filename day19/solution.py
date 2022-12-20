@@ -43,6 +43,10 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
         return (new_collection, new_robots)
 
     def is_profitable(robot_type, collection, robots, step):
+        if robot_type == "obs":
+            if robots["obs"] + collection["obs"] / (steps_limit - step) >= robots_costs["geode"]["obs"]:
+                return False
+            return True
         if robot_type == "clay":
             if robots["clay"] + collection["clay"] / (steps_limit - step) >= robots_costs["obs"]["clay"]:
                 return False
@@ -82,16 +86,8 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
             new_collection[robot_key] += robots[robot_key]
         return new_collection
 
-    min_value_per_step = [0, 0]
-
     def solve(collection, robots, step, previously_not_builded):
         step_collection = evaluate(collection, robots)
-        if min_value_per_step[0] < step_collection["geode"] and step <= min_value_per_step[1]:
-            min_value_per_step[0] = step_collection["geode"]
-            min_value_per_step[1] = step
-        
-        if step - min_value_per_step[1] > 5 and min_value_per_step[0] > step_collection["geode"]:
-            return step_collection["geode"]
         if step == steps_limit:
             return step_collection["geode"]
         best_value = step_collection["geode"]
@@ -116,7 +112,7 @@ def problem(blueprint_id, ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode
                     best_value = build_robot_step_value
                 
         if best_value == None:
-            raise ValueError("Best value should not be none at this point")
+            raise ValueError("Best value should not be None at this point")
         return best_value
     
     blueprint_id = int(blueprint_id)
@@ -164,4 +160,3 @@ with open('input', 'r') as input_file:
 
     # Task B
     print(b_results[0] * b_results[1] * b_results[2])  
-
