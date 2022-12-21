@@ -14,7 +14,7 @@ def isnumber(str):
 
 root_monkey = None
 
-with open('2022/day21/input', 'r') as input_file:
+with open('input', 'r') as input_file:
     for line in input_file:
         [monkey, operation] = line.split(':')
         operation = operation.strip()
@@ -27,7 +27,7 @@ with open('2022/day21/input', 'r') as input_file:
             task_b_monkeys_unknown[monkey] = (left, op, right)
 
 task_b_monkeys_known['humn'] = 'X' # 3678125418015
-(root_l, root_op, root_r) = task_b_monkeys_unknown['root'] # for my nput root_l is an expression and root_r is some calculated value
+(root_l, root_op, root_r) = task_b_monkeys_unknown['root'] # for my nput root_l is an expression and root_r will be some constant value after part 1
 del task_b_monkeys_unknown['root']
 
 def evaluate_a(left, right, op):

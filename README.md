@@ -24,8 +24,25 @@
 | [Boiling Boulders](https://adventofcode.com/2022/day/18) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day18)  
 | [Not Enough Minerals](https://adventofcode.com/2022/day/19) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day19)  
 | [Grove Positioning System](https://adventofcode.com/2022/day/20) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day20)  
-| [?](https://adventofcode.com/2022/day/21) |  |
-| [?](https://adventofcode.com/2022/day/22) |  |
+| [Monkey Math](https://adventofcode.com/2022/day/21) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day21) |
+| [?](https://adventofcode.com/2022/day/22) |   |
 | [?](https://adventofcode.com/2022/day/23) |  |
 | [?](https://adventofcode.com/2022/day/24) |  |
 | [?](https://adventofcode.com/2022/day/25) |  |
+
+## 2021
+
+## 2020
+
+## 2019
+
+## 2018
+
+## 2017
+
+## 2016
+
+## 2015
+
+| Day | Task Name | 
+| --- | --------- |
