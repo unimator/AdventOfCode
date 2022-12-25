@@ -2,7 +2,7 @@
 
 ## 2022
 
-| Day | Task Name | 
+| Task Name | Solution | 
 | --- | --------- |
 | [Calorie Counting](https://adventofcode.com/2022/day/1) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day1) |
 | [Rock Paper Scissors](https://adventofcode.com/2022/day/2) | [Solution](https://github.com/unimator/AdventOfCode/tree/main/2022/day2)    
